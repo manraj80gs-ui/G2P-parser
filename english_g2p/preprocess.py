@@ -27,10 +27,18 @@ class DictionaryParser:
                 # Extract word
                 word = line.split("(set!")[0].strip()
 
-                # Extract phones
-                phones = re.findall(r'"([^"]+)"', line)
+               # Extract each syllable separately
+                syllables = []
 
-                pronunciation[word] = phones
+                matches = re.findall(r'\(\(\s*(.*?)\s*\)\s*0\)', line)
+
+                for match in matches:
+
+                    phones = re.findall(r'"([^"]+)"', match)
+
+                    syllables.append(phones)
+
+                    pronunciation[word] = syllables
 
         return pronunciation
 
@@ -45,7 +53,7 @@ def main():
 
     pronunciation = parser.parse()
 
-    output = ROOT / "data" / "pronunciation.json"
+    output = ROOT / "data" / "pronunciation2.json"
 
     with open(output, "w", encoding="utf8") as f:
         json.dump(pronunciation, f, indent=2)
